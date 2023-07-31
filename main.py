@@ -61,20 +61,34 @@ def export_specs():
 
 def main(data_file):
 
+    le = preprocessing.LabelEncoder()
+
+    ### Transformações especificas do .data categórico
     if(".data" in data_file):
         dataset = np.loadtxt(data_file, delimiter = ',', dtype=str)
+        X = []
+        for i in range(1, dataset.shape[1]):
+            X.append(le.fit_transform(dataset[:, [i]]))
+        x = np.asarray(X)
+        x = np.transpose(X)
+        x = pd.DataFrame(x)
+
+        y = dataset[:, [0]]
+        y = le.fit_transform(y)
+    ### Repartição específica do .csv
     elif (".csv" in data_file):
         dataset = pd.read_csv(data_file)
+        ### Adquire as variáveis do dataset
+        x = dataset.iloc[:, :-1]
 
-    ### Adquire as variáveis do dataset
-    x = dataset.iloc[:, :-1]
+        ### Adquire as classes do dataset
+        y = dataset.iloc[:, -1]
 
-    ### Adquire as classes do dataset
-    y = dataset.iloc[:, -1]
-
-    ### Transforma as classes em números
-    le = preprocessing.LabelEncoder()
-    y = le.fit_transform(y)
+        ### Transforma as classes em números
+        y = le.fit_transform(y)
+    else:
+        print("Formato de arquivo nao reconhecido")
+        sys.exit()
 
     specs = export_specs()
 
