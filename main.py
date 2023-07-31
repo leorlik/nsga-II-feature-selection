@@ -86,7 +86,10 @@ def main(data_file):
             file_name_1 = specs[i]["name"] + "_and_" + specs[j]["name"] + "_variables.dat"
             file_name_2 = specs[i]["name"] + "_and_" + specs[j]["name"] + "_scores.dat"
 
-            features, fitness = resolve_problema(x , y, specs[i], specs[j], file_name_1, file_name_2, maximiza_1=specs[i]["max"], maximiza_2=specs[j]["max"])
+            features, fitness = resolve_problema(x , y, 
+                                                    n_var = x.shape[1], func1 = specs[i], func2 = specs[j],
+                                                    file_name_1 = file_name_1, file_name_2 = file_name_2, 
+                                                    maximiza_1=specs[i]["max"], maximiza_2=specs[j]["max"])
 
             print("Caso de: " + specs[i]["name"] + " e " + specs[j]["name"])
 
@@ -101,6 +104,10 @@ def main(data_file):
             acc, f1, recall, precision = avalia_solucao(x, y, features)
 
             scores.append((specs[i]["abreviacao"] + "+" + specs[j]["abreviacao"], acc, f1, recall, precision, fitness[0], fitness[1], np.sum(features)))
+
+    ### Compara com todas as variáveis
+    acc, f1, recall, precision = avalia_solucao(x, y, np.ones(x.shape[1]))
+    scores.append(("Todas as variáveis", acc, f1, recall, precision, 0, 0, x.shape[1]))
 
     scores = pd.DataFrame(scores, columns=["Métricas", "Acurácia", "F1", "Recall", "Precisão", "Valor 1", "Valor 2", "Número de variáveis"])
     scores.to_csv("scores.csv", index=False)

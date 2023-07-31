@@ -28,7 +28,7 @@ def shell_func(x, x_index, func, y):
 
     ### Se não há variáveis, retorna 0
     if(x_evaluate.shape[1] == 0):
-        return 0
+        return 9999
 
     return func(x_evaluate, y)
 
@@ -232,12 +232,13 @@ def fcbf(X, y, **kwargs):
                 length = len(s_list)//2
                 s_list = s_list.reshape((length, 2))
     #return np.array(F, dtype=int), np.array(SU)
-    return np.array(SU)
+    su = np.array(SU)
+    return (np.sum(su))/su.shape[0]
 
 from skfeature.function.similarity_based import lap_score
 from skfeature.utility.construct_W import construct_W
 
-def laplacian_score(x, x_local, y_local, kwargs_W = {"metric": "euclidean", "neighbor_mode": "knn", "weight_mode": "heat_kernel", "k": 5, 't': 1}):
+def laplacian_score(x_local, y_local, kwargs_W = {"metric": "euclidean", "neighbor_mode": "knn", "weight_mode": "heat_kernel", "k": 5, 't': 1}):
     """
     Função que calcula a pontuação laplaciana de um conjunto de dados
 
@@ -252,6 +253,6 @@ def laplacian_score(x, x_local, y_local, kwargs_W = {"metric": "euclidean", "nei
     ------------
         A pontuação laplaciana do conjunto de dados x_local
     """
-    W = construct_W(x.values, **kwargs_W)
+    W = construct_W(x_local, **kwargs_W)
     score = lap_score.lap_score(x_local, W=W)
     return (np.sum(score)/len(score))

@@ -5,7 +5,7 @@ from pymoo.termination import get_termination
 from pymoo.operators.crossover.pntx import TwoPointCrossover
 from pymoo.operators.mutation.bitflip import BitflipMutation
 from pymoo.operators.sampling.rnd import BinaryRandomSampling
-from metricas import shell_func
+from libs.metricas import shell_func
 import numpy as np
 import os
 
@@ -42,6 +42,9 @@ def get_best_index(F, max_0, max_1):
     dist = manhattan_distance(point, F[0])
     index = 0
     for i in range(1, F.shape[0]):
+        ### Se a distancia é 9999, não considera o ponto
+        if(F[i][0] == 9999 or F[i][1] == 9999):
+            continue
         dist_atual = manhattan_distance(point, F[i])
         if (dist_atual < dist):
             dist = dist_atual
@@ -94,9 +97,14 @@ def resolve_problema(x, y, func1, func2, n_var, file_name_1 = "x.dat", file_name
 
     ### Define os objetivos do problema multi-objetivo
     objetivo = [
-        lambda a: fator_1 * shell_func(x, a, func1, y),
-        lambda a: fator_2 * shell_func(x, a, func2, y)
+        lambda a: fator_1 * shell_func(x, a, func1["func"], y),
+        lambda a: fator_2 * shell_func(x, a, func2["func"], y)
     ]
+
+    ### Define a restrição que a soma dos pesos deve ser maior que 0 (De uma forma que utilize o padrão do framework, ou seja, que seja uma inequalidade <= 0)
+    constr_ieq = [
+        lambda a: (-1 *np.sum(a)) +1
+    ]   
     
     ### Define a função de parada
     termination = get_termination("n_gen", n_gen)
@@ -104,6 +112,7 @@ def resolve_problema(x, y, func1, func2, n_var, file_name_1 = "x.dat", file_name
     ### Cria o problema multi-objetivo
     problem = FunctionalProblem(n_var,
                                 objetivo,
+                                constr_ieq=constr_ieq,
                                 xl= np.array([0] * n_var),
                                 xu= np.array([1] * n_var))
 
@@ -145,6 +154,8 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
+from sklearn.utils._testing import ignore_warnings
+from sklearn.exceptions import FitFailedWarning   
 
 def avalia_solucao(x, y, features_x, params = {'penalty': ['l2', 'elasticnet'], 'C': [0.1, 1.0, 10.0], 'solver': ['lbfgs', 'saga']}):
 
@@ -170,7 +181,8 @@ def avalia_solucao(x, y, features_x, params = {'penalty': ['l2', 'elasticnet'], 
     for Itr, Ite in kf.split(xv):
         gs = GridSearchCV(LogisticRegression(), params, cv = 5,scoring='accuracy', verbose=False)
         X_tr, X_te, y_tr, y_te = xv[Itr,:], xv[Ite,:], y[Itr], y[Ite]
-        gs.fit(X_tr, y_tr)
+        with ignore_warnings(category=(FitFailedWarning, UserWarning)):
+            gs.fit(X_tr, y_tr)
         y_pred = gs.predict(X_te)
         acc_soma += accuracy_score(y_te,y_pred)
         f1_soma += f1_score(y_te,y_pred)
