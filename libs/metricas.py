@@ -231,9 +231,15 @@ def fcbf(X, y, **kwargs):
                 s_list = s_list[idx]
                 length = len(s_list)//2
                 s_list = s_list.reshape((length, 2))
-    #return np.array(F, dtype=int), np.array(SU)
+    
     su = np.array(SU)
-    return (np.sum(su))/su.shape[0]
+
+    ### Garante que não haja divisão por 0
+    if (su.shape[0] > 0):
+        ret = (np.sum(su))/su.shape[0]
+    else:
+        ret = 1
+    return ret
 
 from skfeature.function.similarity_based import lap_score
 from skfeature.utility.construct_W import construct_W
