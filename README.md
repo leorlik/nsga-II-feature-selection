@@ -55,9 +55,8 @@ A distância intra-classe denota a concentração de cada classe, ou seja, quant
 
 Sua fórmula é dada por:
 
-\[
-IA = \frac{1}{n}\sum\_{r=1}^{k}\sum\_{j=1}^{n\_{r}}d(p^{r}\_{j}, p\_{r})
-\]
+
+$IA = \frac{1}{n}\sum\_{r=1}^{k}\sum\_{j=1}^{n\_{r}}d(p^{r}\_{j}, p\_{r})$
 
 Onde n é o número de amostras, r o número de amostras de uma classe, k as classes, com $p\_{j}^{r}$ sendo o j-ésimo exemplo da classe r, com $p\_{r}$ sendo o exemplo central da classe, e d a distancia euclidiana.
 
@@ -65,9 +64,8 @@ Onde n é o número de amostras, r o número de amostras de uma classe, k as cla
 
 A Distância Inter-Classe indica a distância entre os exemplos que não são da mesma classe, ou seja, queremos maximizar esta distância o máximo possível, para que seja mais fácil para um modelo distinguir os exemplos. A expressão matemática desta métrica é:
 
-\[
-IE = \frac{1}{n}\sum\_{r=1}^{k}n\_{r}d(p\_{r}, p)
-\]
+
+$IE = \frac{1}{n}\sum\_{r=1}^{k}n\_{r}d(p\_{r}, p)$
 
 Em que n é o número de amostras, r o número de amostras de uma classe, k a quantia de classes, com $p\_{r}$ sendo o exemplo central da classe, e d a distancia euclidiana.
 
@@ -75,13 +73,9 @@ Em que n é o número de amostras, r o número de amostras de uma classe, k a qu
 
 A pontuação LaPlaciana parte da ideia que, em problemas de classificação, exemplos da mesma classe estão relativamente próximos uns dos outros e é estraída a partir de um grafo LaPlaciano. Sua expressão matemática é a seguinte:
 
-\[
-LS(i) = \frac{\widetilde{x}(i)^{T}L\widetilde{x}(i)}{\widetilde{x}(i)^{T} D\widetilde{x}(i)}
-\]
+$LS(i) = \frac{\widetilde{x}(i)^{T}L\widetilde{x}(i)}{\widetilde{x}(i)^{T} D\widetilde{x}(i)}$
 
-\[
-\widetilde{x} = x(i) - \frac{x(i)^{T} D1}{1^{T}D1}
-\]
+$\widetilde{x} = x(i) - \frac{x(i)^{T} D1}{1^{T}D1}$
 
 Onde L é o grafo LaPlaciano, x(i) uma matriz $n * 1$ $x(i) = [x1(i), x2(i),..,x\_{n}(i)]^{T}$ e $1 = [1,...,1]^{T}$ e as matrizes D e L são definidas como D = diag(S1), com diag sendo um operador que extrai a diagonal de uma matriz, e L = D - S, sendo S a matriz que conecta os vizinhos mais próximos do grafo.
 
@@ -89,13 +83,9 @@ Onde L é o grafo LaPlaciano, x(i) uma matriz $n * 1$ $x(i) = [x1(i), x2(i),..,x
 
 A correlação de atributos de classe mede a chance de se prever o valor de um atributo baseado no valor de outro, medindo a redundância nos dados. Portanto, queremos minimizá-la. Sua expressão matemática é a seguinte:
 
-\[
-AC = (\sum Wi\*C(i))/\sum(Wi)
-\]
+$AC = (\sum Wi\*C(i))/\sum(Wi)$
 
-\[
-C(i) = \frac{\sum\_{j\_{1} \neq j\_{2}} || x\_{j1}(i) - x\_{j2}(i) || f( x\_{j1}, x\_{j2})}{n(n-1)/2}
-\]
+$C(i) = \frac{\sum\_{j\_{1} \neq j\_{2}} || x\_{j1}(i) - x\_{j2}(i) || f( x\_{j1}, x\_{j2})}{n(n-1)/2}$
 
 Sendo $x\_{j}(i)$ o valor de um atributo i no exemplo j, com n o número de exemplo e m o número de atributos, com i de 1 a m e j de 1 a n, com $||$    $||$ denotando a função módulo, com $\varphi$ sendo 1 se $j\_{1}$ e $j\_{2}$ são da mesma classe e 0.05 caso contrário. O vetor de pesos w(i) assume o valor 0 se o atributo i não está selecionado, e 1 caso contrário.
 
@@ -103,9 +93,7 @@ Sendo $x\_{j}(i)$ o valor de um atributo i no exemplo j, com n o número de exem
 
 ormalizando os valores dos atributos, podemos ver se um atributo é independente de outro: o valor 1 indica dependência direta e 0 independência. Uma vez que queremos maximizar o uso de variáveis independentes, queremos minimizar a incerteza simétrica. A expressão é a seguinte:
 
-\[
-SU(X\_{1}, X\_{2}) = 2[\frac{H(X\_{1}) - H(X\_{1}|X\_{2})}{H(X\_{1}) + H(X\_{2})}]
-\]
+$SU(X\_{1}, X\_{2}) = 2[\frac{H(X\_{1}) - H(X\_{1}|X\_{2})}{H(X\_{1}) + H(X\_{2})}]$
 
 Sendo H a função que calcula a entropia, ou seja, o ganho de informação, onde $X\_{1}$ e $X\_{2}$ são atributos distintos.
 
