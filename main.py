@@ -90,10 +90,12 @@ def main(data_file):
         print("Formato de arquivo nao reconhecido")
         sys.exit()
 
+    #Adquire as funções de métrica
     specs = export_specs()
 
     scores = []
     
+    ### Itera sobre os pares de funções de métrica
     for i in range(0, len(specs)):
         for j in range(i+1, len(specs)):
 
@@ -107,6 +109,7 @@ def main(data_file):
 
             print("Caso de: " + specs[i]["name"] + " e " + specs[j]["name"])
 
+            ### Se é para maximizar, inverte o valor de fitness
             if(specs[i]["max"]):
                 fitness[0] *= -1
             print("Valor de " + specs[i]["name"] + ": " +str(fitness[0]))
@@ -123,6 +126,7 @@ def main(data_file):
     acc, f1, recall, precision = avalia_solucao(x, y, np.ones(x.shape[1]))
     scores.append(("Todas as variáveis", acc, f1, recall, precision, 0, 0, x.shape[1]))
 
+    ### Salva o dataframe
     scores = pd.DataFrame(scores, columns=["Métricas", "Acurácia", "F1", "Recall", "Precisão", "Valor 1", "Valor 2", "Número de variáveis"])
     scores.to_csv("scores.csv", index=False)
 

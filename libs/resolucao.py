@@ -158,7 +158,22 @@ from sklearn.utils._testing import ignore_warnings
 from sklearn.exceptions import FitFailedWarning   
 
 def avalia_solucao(x, y, features_x, params = {'penalty': ['l2', 'elasticnet'], 'C': [0.1, 1.0, 10.0], 'solver': ['lbfgs', 'saga']}):
+    """
+    Função que avalia a performance do algoritmo de regressão logística em um subconjunto de variáveis do dataset x
 
+    Parametros:
+    ------------
+        x: dataset de variáveis
+        y: classes do problema
+        features_x: vetor que indica os pesos de cada variável (0 ou 1)
+        params: parâmetros do GridSearchCV
+
+    Retorno:
+    ------------
+        Acurácia, F1, Recall e Precisão do melhor modelo construído em cima daquela solução
+    """
+
+    ### Função interna que adquire os indexes do subconjunto de variáveis selecionado
     def get_all_indexes(solution):
         s = []
         for i in range(0, solution.shape[0]):
@@ -171,24 +186,32 @@ def avalia_solucao(x, y, features_x, params = {'penalty': ['l2', 'elasticnet'], 
     recall_soma = 0.0
     precision_soma = 0.0
 
+    ### Adquire as variáveis que foram selecionadas
     xv = x.values
-    num_vars = np.sum(features_x)
     indexes = get_all_indexes(features_x)
     xv = xv[:, indexes]
 
     kf = KFold(shuffle=True,random_state=66,n_splits=10)
 
+    ### Faz a validação cruzada
     for Itr, Ite in kf.split(xv):
         gs = GridSearchCV(LogisticRegression(), params, cv = 5,scoring='accuracy', verbose=False)
+
+        ### Separa os dados de treino e teste 
         X_tr, X_te, y_tr, y_te = xv[Itr,:], xv[Ite,:], y[Itr], y[Ite]
+
+        ### Silencia os warnings do GridSearchCV
         with ignore_warnings(category=(FitFailedWarning, UserWarning)):
             gs.fit(X_tr, y_tr)
+
+        ### Prediz e calcula as métricas de interesse
         y_pred = gs.predict(X_te)
         acc_soma += accuracy_score(y_te,y_pred)
         f1_soma += f1_score(y_te,y_pred)
         recall_soma += recall_score(y_te,y_pred)
         precision_soma += precision_score(y_te,y_pred)
 
+    ### Calcula as médias das métricas
     acc_media =  acc_soma / kf.n_splits
     f1_media =  f1_soma / kf.n_splits
     recall_media =  recall_soma / kf.n_splits

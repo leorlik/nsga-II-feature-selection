@@ -43,13 +43,94 @@ Os pontos não dominados por nenhuma solução no espaço objetivo são os ponto
 
 ## 6. NSGA-II:
 
-m Abril de 2002 foi proposto a evolução do nondominated sorting genetic algorithm (algoritmo genético de ordenção não-dominada), o NSGA-II\cite{Deb:02}, que hoje em dia conta com 35800 citações(Connected Papers, acesso em 07/02/2023). Tendo populaçoes de tamanho N, o NSGA-II recombina tal população numa população de tamanho 2N e a ordena baseado no ranking da fronteira de pareto, priorizando soluções da fronteira classe 1 e completando com as fronteiras subsequentes, e o desempate de soluções na mesma classe de fronteira se dá por um operador chamado _crowd distance_, que consegue cobrir a maior quantia do espaço amostral daquela fronteira de Pareto.
+Em Abril de 2002 foi proposto a evolução do nondominated sorting genetic algorithm (algoritmo genético de ordenção não-dominada), o NSGA-II, que hoje em dia conta com 35800 citações(Connected Papers, acesso em 07/02/2023). Tendo populaçoes de tamanho N, o NSGA-II recombina tal população numa população de tamanho 2N e a ordena baseado no ranking da fronteira de pareto, priorizando soluções da fronteira classe 1 e completando com as fronteiras subsequentes, e o desempate de soluções na mesma classe de fronteira se dá por um operador chamado _crowd distance_, que consegue cobrir a maior quantia do espaço amostral daquela fronteira de Pareto.
 
 ## 7. Funções objetivos:
 
-## 8. Parâmetros do NSGA-II:
+As seguintes funções objetivos foram selecionadas para serem testadas em pares, se baseando nos artigos referidos no início do texto:
+
+### 7.1. Distância Intra-Classe (IA):
+
+A distância intra-classe denota a concentração de cada classe, ou seja, quanto menor ela é, mais próximos os exemplos de cada classe estão, portanto, é uma métrica que desejamos minimizar.
+
+Sua fórmula é dada por:
+
+\[
+IA = \frac{1}{n}\sum\_{r=1}^{k}\sum\_{j=1}^{n\_{r}}d(p^{r}\_{j}, p\_{r})
+\]
+
+Onde n é o número de amostras, r o número de amostras de uma classe, k as classes, com $p\_{j}^{r}$ sendo o j-ésimo exemplo da classe r, com $p\_{r}$ sendo o exemplo central da classe, e d a distancia euclidiana.
+
+### 7.2. Distância Inter-Classe (IE):
+
+A Distância Inter-Classe indica a distância entre os exemplos que não são da mesma classe, ou seja, queremos maximizar esta distância o máximo possível, para que seja mais fácil para um modelo distinguir os exemplos. A expressão matemática desta métrica é:
+
+\[
+IE = \frac{1}{n}\sum\_{r=1}^{k}n\_{r}d(p\_{r}, p)
+\]
+
+Em que n é o número de amostras, r o número de amostras de uma classe, k a quantia de classes, com $p\_{r}$ sendo o exemplo central da classe, e d a distancia euclidiana.
+
+### 7.3. Pontuação LaPlaciana (LS):
+
+A pontuação LaPlaciana parte da ideia que, em problemas de classificação, exemplos da mesma classe estão relativamente próximos uns dos outros e é estraída a partir de um grafo LaPlaciano. Sua expressão matemática é a seguinte:
+
+\[
+LS(i) = \frac{\widetilde{x}(i)^{T}L\widetilde{x}(i)}{\widetilde{x}(i)^{T} D\widetilde{x}(i)}
+\]
+
+\[
+\widetilde{x} = x(i) - \frac{x(i)^{T} D1}{1^{T}D1}
+\]
+
+Onde L é o grafo LaPlaciano, x(i) uma matriz $n * 1$ $x(i) = [x1(i), x2(i),..,x\_{n}(i)]^{T}$ e $1 = [1,...,1]^{T}$ e as matrizes D e L são definidas como D = diag(S1), com diag sendo um operador que extrai a diagonal de uma matriz, e L = D - S, sendo S a matriz que conecta os vizinhos mais próximos do grafo.
+
+### 7.4. Correlação de Atributos de Classe (AC):
+
+A correlação de atributos de classe mede a chance de se prever o valor de um atributo baseado no valor de outro, medindo a redundância nos dados. Portanto, queremos minimizá-la. Sua expressão matemática é a seguinte:
+
+\[
+AC = (\sum Wi\*C(i))/\sum(Wi)
+\]
+
+\[
+C(i) = \frac{\sum\_{j\_{1} \neq j\_{2}} || x\_{j1}(i) - x\_{j2}(i) || f( x\_{j1}, x\_{j2})}{n(n-1)/2}
+\]
+
+Sendo $x\_{j}(i)$ o valor de um atributo i no exemplo j, com n o número de exemplo e m o número de atributos, com i de 1 a m e j de 1 a n, com $||$    $||$ denotando a função módulo, com $\varphi$ sendo 1 se $j\_{1}$ e $j\_{2}$ são da mesma classe e 0.05 caso contrário. O vetor de pesos w(i) assume o valor 0 se o atributo i não está selecionado, e 1 caso contrário.
+
+### 7.5. Incerteza Simétrica (SU):
+
+ormalizando os valores dos atributos, podemos ver se um atributo é independente de outro: o valor 1 indica dependência direta e 0 independência. Uma vez que queremos maximizar o uso de variáveis independentes, queremos minimizar a incerteza simétrica. A expressão é a seguinte:
+
+\[
+SU(X\_{1}, X\_{2}) = 2[\frac{H(X\_{1}) - H(X\_{1}|X\_{2})}{H(X\_{1}) + H(X\_{2})}]
+\]
+
+Sendo H a função que calcula a entropia, ou seja, o ganho de informação, onde $X\_{1}$ e $X\_{2}$ são atributos distintos.
+
+## 8. Hiperparâmetros e afins:
+
+Para a realização dos experimentos, foi utilizada a implementação do NSGA-II disponível no framework [pymoo](https://pymoo.org/), replicando as condições dos experimentos do artigo de Vendakari, ou seja:
+
+- População de 50 indivíduos;
+- Taxa de cruzamento de 0.8;
+- Taxa de mutação de 0.01;
+- e parada após 50 iterações.
+
+Além disso, para configuração do framework, foi usado:
+
+- Crossover de dois pontos;
+- Mutação de Flip de bit;
+- Multiplicação das métricas para maxizimar por -1, pois por padrão o framework permite apenas minimização.
+
+E o classificador utilizado, ao contrário do artigo que utiliza uma árvore de decisão, foi a regressão logística.
 
 ## 9. Datasets:
+
+Os [dados de sonar](https://archive.ics.uci.edu/dataset/151/connectionist+bench+sonar+mines+vs+rocks) são um problema de classificação binária disponível no UCI com 208 amostras e 60 atributos e foi utilizado no artigo de inspiração para este trabalho. A motivação para o uso de tal conjunto foi para comparar os resultados utilizando o modelo de regressão logística com o modelo utilizando o J48 do trabalho anterior, que é um modelo de árvore que também possui um mecanismo de seleção de atributos dentro dele não explorado pelos autores.
+
+O [dataset de cogumelos](https://archive.ics.uci.edu/dataset/73/mushroom) também foi extraído da UCI e é dividido em duas classes: comestíveis e venenosos. Porém, em contraste com a tarefa do sonar, ele possui apenas 22 atributos e 8124 amostras, com todos os dados categóricos (o que não é problema, já que a regressão logística consegue lidar com dados tanto categóricos quanto contínuos e discretos).
 
 ## 10. Resultados:
 
