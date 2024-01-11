@@ -94,8 +94,7 @@ def main(data_file):
     specs = export_specs()
 
     scores = []
-    
-    ### Itera sobre os pares de funções de métrica
+
     for i in range(0, len(specs)):
         for j in range(i+1, len(specs)):
 

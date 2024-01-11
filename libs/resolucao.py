@@ -117,7 +117,7 @@ def resolve_problema(x, y, func1, func2, n_var, file_name_1 = "x.dat", file_name
                                 xu= np.array([1] * n_var))
 
     ### Resolve o problema
-    res = minimize(problem, algorithm, termination, seed = 98, verbose = True)
+    res = minimize(problem, algorithm, termination, seed = 98, verbose = False)
 
     ### Pega os melhores indivíduos e seus fitness
     x_res = res.X.astype(int)
