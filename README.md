@@ -124,19 +124,19 @@ O [dataset de cogumelos](https://archive.ics.uci.edu/dataset/73/mushroom) també
 
 Os resultados, para mim particularmente, foram surpreendentes. Enquanto no experimento realizado na matéria da faculdade o único classificador utilizado foi uma simples regressão logística -  fazendo com que alguns métodos (utilizando a distância inter-classe e a pontuação LaPlaciana, por exemplo) superassem a acurácia com todas as variáveis - neste experimento o GridSearch foi utilizado e, quando usado, esta ferramenta de busca pelo melhor classificador acaba por comportar melhor todas as variáveis ao invés de apenas os selecionados pelos métodos utilizados, evidenciando que o resultado final é influenciado tanto pelo método de classificação quanto pelas variáveis selecionadas. Abaixo, os gráficos mostram a acurácia em relação a cada par de métricas, em comparação com o uso de todas as variáveis.  
 
-![](figuras/Acurácia para dataset de Sonar.png)
+![](figuras/acuracia_sonar.png)
 
-![](figuras/Acurácia para dataset de Cogumelos.png)
+![](figuras/acuracia_cogumelos.png)
 
 No caso do dataset do sonar, nenhum método supera ou se equipara ao uso de todas as 60 variáveis disponíveis, sendo o par de métricas de seleção com taxa de acerto mais próxima a Distância Inter-Classe com a Correlação de Atributos de Classe, atingindo o valor de 0.745, enquanto o uso de todas as variáveis resulta em uma acurácia de 0.779. O gráfico abaixo compara o uso de todas as variáveis e o par IE+AC em relação a diferentes métricas.
 
-![](figuras/Comparação de métricas para o dataset de Sonar.png)
+![](figuras/comparacao_sonar.png)
 
 Com exceção do recall, em que o par de métricas atinge 0.68 e o uso completo das variáveis próximo de 0.74, todas as métricas possuem valores bem próximos, o que é impressionante se considerar a redução de 86% das variáveis utilizadas no caso em que são selecionadas. Embora o teto de variáveis nesse caso seja 60, ainda um número pequeno considerando os data streams de hoje em dia, uma redução pequena nas métricas observadas em troca de uma drástica redução da proporção de variáveis pode ser bem vinda quando há muitas variáveis na base de dados. 
 
 Já no caso do dataset de sonar, é curioso como em alguns casos (IE+LS, AC+LS e SU+LS) todas as 22 variáveis foram mantidas, seja porque o número é pequeno então foi sempre mantido durante as gerações do NSGA-II ou outro motivo. Com exceção destes, o par de métricas para seleção de variáveis que chegou mais próximo foi o da Distância Intra-Classe com a Correlação de Atributos de Classe, atingindo 0.92 de acurácia. O gráfico abaixo compara o par IA+AC com o uso de todos os atributos em diversas métricas. 
 
-![](figuras/Comparação de métricas para o dataset de Cogumelos.png)
+![](figuras/comparacao_cogumelos.png)
 
 Assim como no caso do sonar, o melhor par de métricas para otimização que reduz as variáveis significativamente (aqui há uma redução de 68% das variáveis utilizadas) chega próximo do uso completo das variáveis em todas as métricas. 
 
